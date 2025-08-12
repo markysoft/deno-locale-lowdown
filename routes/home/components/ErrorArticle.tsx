@@ -1,13 +1,10 @@
 export function ErrorArticle({ message }: { message: string }) {
-
-    return (
-        <article class="message is-danger">
-            <div class="message-header">
-                <p>Error</p>
-            </div>
-            <div class="message-body">
-                { message }
-            </div>
-        </article>
-    )
+	return (
+		<div id='site-error' class='container'>
+			<div class='notification is-danger'>
+				<h1 class='title'>Something went wrong</h1>
+				<p>{message}</p>
+			</div>
+		</div>
+	)
 }

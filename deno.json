@@ -4,7 +4,7 @@
 		"html-entities": "npm:html-entities@^2.6.0",
 		"node-html-parser": "npm:node-html-parser@^7.0.1",
 		"zod": "npm:zod@^4.0.17",
-    "@/": "./"
+		"@/": "./"
 	},
 	"tasks": {
 		"start": "deno run --allow-net --allow-env=\"SPIN_*\" main.tsx"
