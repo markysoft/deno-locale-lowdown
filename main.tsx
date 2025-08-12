@@ -69,6 +69,6 @@ app.get('/sse2', async c => {
 app.onError((err, c) => {
   console.error(`${err}`)
   const message = err instanceof Error ? err.message : JSON.stringify(err)
-  return c.render(<ErrorArticle message={message} />)
+  return c.html(<ErrorArticle message={message} />)
 })
 Deno.serve({ port: 3000 }, app.fetch)

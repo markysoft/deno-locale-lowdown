@@ -1,6 +1,5 @@
 import { z } from 'zod'
 import { StreamManager } from './lib/StreamManager.ts'
-import process from "node:process";
 
 const AppSettingsSchema = z.object({
 	travel: z.object({
@@ -23,23 +22,22 @@ let appSettings: AppSettings | undefined
 
 export function getAppSettings(): AppSettings {
 	if (appSettings === undefined) {
-		{
-			appSettings = AppSettingsSchema.parse({
-				travel: {
-					homeBusStop: process.env.SPIN_VARIABLE_HOME_BUS_STOP,
-					townBusStop: process.env.SPIN_VARIABLE_TOWN_BUS_STOP,
-					railApiKey: process.env.SPIN_VARIABLE_RAIL_API_KEY,
-				},
-				weather: {
-					apiKey: process.env.SPIN_VARIABLE_OPEN_WEATHER_API_KEY,
-					metOfficeApiKey:
-						process.env.SPIN_VARIABLE_MET_OFFICE_API_KEY,
-				},
-				tide: {
-					location: process.env.SPIN_VARIABLE_TIDE_LOCATION,
-				},
-			})
-		}
+		appSettings = AppSettingsSchema.parse({
+			travel: {
+				homeBusStop: Deno.env.get('SPIN_VARIABLE_HOME_BUS_STOP'),
+				townBusStop: Deno.env.get('SPIN_VARIABLE_TOWN_BUS_STOP'),
+				railApiKey: Deno.env.get('SPIN_VARIABLE_RAIL_API_KEY'),
+			},
+			weather: {
+				apiKey: Deno.env.get('SPIN_VARIABLE_OPEN_WEATHER_API_KEY'),
+				metOfficeApiKey: Deno.env.get(
+					'SPIN_VARIABLE_MET_OFFICE_API_KEY',
+				),
+			},
+			tide: {
+				location: Deno.env.get('SPIN_VARIABLE_TIDE_LOCATION'),
+			},
+		})
 	}
 	return appSettings
 }
