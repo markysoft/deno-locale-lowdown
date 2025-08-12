@@ -50,8 +50,8 @@ export function TrainDeparturesList(
 				<div class='card-content'>
 					<p class='content'>
 						Last updated: <strong>{departures.generatedAt}</strong>
-						<span id='train-spinner' data-show='$_fetchTrains'>
-							&nbsp;<i class='fa fa-sync fa-spin'></i>
+						{' '}<span id='train-spinner' data-show='$_fetchTrains'>
+							<i class='fa fa-sync fa-spin'></i>
 						</span>
 					</p>
 					{departures.trainServices.map(

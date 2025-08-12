@@ -15,9 +15,9 @@ export function NextBusCard(
 							{toHourMinuteString(
 								applyBritishSummerTime(new Date()),
 							)}
-						</strong>
+						</strong>{' '}
 						<span id='train-spinner' data-show='$_fetchTrains'>
-							&nbsp;<i class='fa fa-sync fa-spin'></i>
+							<i class='fa fa-sync fa-spin'></i>
 						</span>
 					</p>
 					<div class='content has-text-centered'>

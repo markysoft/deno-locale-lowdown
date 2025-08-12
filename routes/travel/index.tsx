@@ -29,7 +29,7 @@ app.get('/bus', async (c) => {
 		return Promise.resolve(htmlString)
 	}
 
-	return await streamWrapper(c, updateBusTimes, oneMinuteInSeconds)
+	return await streamWrapper(c, updateBusTimes, oneMinuteInSeconds - 10, 60)
 })
 
 app.get('/train/:code', async (c) => {
@@ -39,7 +39,7 @@ app.get('/train/:code', async (c) => {
 	const updateTrainDepartures = async () => {
 		const departures = await cacheWrapper<Departures>(
 			`train-${code}`,
-			oneMinuteInSeconds,
+			oneMinuteInSeconds - 10,
 			() => getDepartures(code, travelSettings.railApiKey),
 		)
 		const htmlString = (<TrainDeparturesList departures={departures} />)
@@ -47,7 +47,7 @@ app.get('/train/:code', async (c) => {
 		return htmlString
 	}
 
-	return await streamWrapper(c, updateTrainDepartures, oneMinuteInSeconds)
+	return await streamWrapper(c, updateTrainDepartures, oneMinuteInSeconds, 60)
 })
 
 export default app
