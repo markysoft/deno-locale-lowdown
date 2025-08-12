@@ -29,7 +29,7 @@ app.get('/bus', async (c) => {
 		return Promise.resolve(htmlString)
 	}
 
-	return await streamWrapper(c, updateBusTimes, oneMinuteInSeconds - 10, 60)
+	return await streamWrapper(c, updateBusTimes, oneMinuteInSeconds, 60)
 })
 
 app.get('/train/:code', async (c) => {
