@@ -26,9 +26,6 @@ export function TrainDeparturesList(
 		<div id='train-departures'>
 			<h2 class='title has-text-primary-15'>Trains</h2>
 			<div data-signals="{'_fetchTrains': true}"></div>
-			<div data-text='$trainController'></div>
-			<div data-on-load="console.log('yo', $trainController)">
-			</div>
 			<div class='card'>
 				<header class='card-header'>
 					<div class='tabs'>
