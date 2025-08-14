@@ -57,7 +57,7 @@ app.get('/sse2', async (c) => {
 				await stream.sleep(1000)
 			}
 		},
-		async (err, stream) => {
+		(err, stream) => {
 			stream.writeln('An error occurred!')
 			console.error(err)
 			return Promise.resolve()
