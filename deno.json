@@ -7,7 +7,7 @@
 		"@/": "./"
 	},
 	"tasks": {
-		"start": "deno run --allow-net --allow-env=\"SPIN_*\" main.tsx"
+		"start": "deno run --allow-net  --watch --allow-env=\"SPIN_*\" main.tsx"
 	},
 	"compilerOptions": {
 		"jsx": "precompile",
@@ -15,7 +15,7 @@
 	},
 	"fmt": {
 		"useTabs": true,
-		"lineWidth": 80,
+		"lineWidth": 120,
 		"indentWidth": 4,
 		"semiColons": false,
 		"singleQuote": true,
