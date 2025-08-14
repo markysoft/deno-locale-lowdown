@@ -19,13 +19,16 @@ export function TrainDeparturesList(
 	}
 
 	function getTrainUrl(station: { crs: string }) {
-		return `@get('/travel/train/${station.crs.toLowerCase()}')`
+		return `$trainController.abort(); $trainController = new AbortController(); @get('/travel/train/${station.crs.toLowerCase()}', {requestCancellation: $trainController})`
 	}
 
 	return (
 		<div id='train-departures'>
 			<h2 class='title has-text-primary-15'>Trains</h2>
 			<div data-signals="{'_fetchTrains': true}"></div>
+			<div data-text='$trainController'></div>
+			<div data-on-load="console.log('yo', $trainController)">
+			</div>
 			<div class='card'>
 				<header class='card-header'>
 					<div class='tabs'>
@@ -49,8 +52,8 @@ export function TrainDeparturesList(
 				</header>
 				<div class='card-content'>
 					<p class='content'>
-						Last updated: <strong>{departures.generatedAt}</strong>
-						{' '}<span id='train-spinner' data-show='$_fetchTrains'>
+						Last updated: <strong>{departures.generatedAt}</strong>{' '}
+						<span id='train-spinner' data-show='$_fetchTrains'>
 							<i class='fa fa-sync fa-spin'></i>
 						</span>
 					</p>

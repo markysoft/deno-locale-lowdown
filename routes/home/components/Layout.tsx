@@ -52,8 +52,6 @@ export const Layout: FC = () => {
 						<p class='subtitle'>
 							Barton-le-Street Edition
 						</p>
-						<div data-on-datastar-fetch="console.log('fetch', evt.detail.type)">
-						</div>
 						<div data-on-datastar-fetch="$_fetchError = evt.detail.type === 'retrying' || evt.detail.type === 'retry-failed'">
 						</div>
 						<div
@@ -71,15 +69,6 @@ export const Layout: FC = () => {
 									<h2 class='title has-text-primary-15'>
 										Weather
 									</h2>
-									{
-										/* <button data-on-click="@get('/sse')">
-
-                                        Open the pod bay doors, HAL.
-
-                                    </button>
-
-                                    <div id="foo"></div> */
-									}
 									<div
 										id='weather-today'
 										data-on-load="@get('/weather/today')"
@@ -112,7 +101,14 @@ export const Layout: FC = () => {
 										</div>
 									</div>
 								</div>
-								<div class='content'>
+								<div
+									class='content'
+									data-signals='
+									{ 
+							 			trainController: new AbortController(),
+										station: "mlt"
+									}'
+								>
 									<div
 										id='train-departures'
 										data-indicator='_fetchTrains'
