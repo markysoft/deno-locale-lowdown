@@ -106,13 +106,13 @@ export const Layout: FC = () => {
 									data-signals='
 									{ 
 							 			trainController: new AbortController(),
-										station: "mlt"
+										station: "MLT"
 									}'
 								>
 									<div
 										id='train-departures'
 										data-indicator='_fetchTrains'
-										data-on-load="@get('/travel/train/mlt')"
+										data-on-load="@get('/travel/train')"
 									>
 										<div class='spinner box has-text-centered'>
 											<div class='fa fa-spinner fa-spin'>

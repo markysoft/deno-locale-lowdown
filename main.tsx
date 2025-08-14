@@ -12,12 +12,14 @@ import weather from './routes/weather/index.tsx'
 import tides from './routes/tides/index.tsx'
 import { streamWrapper } from './lib/streamWrapper.ts'
 import { ErrorArticle } from './routes/home/components/ErrorArticle.tsx'
+import { datastarMiddleware } from './lib/datastar.tsx'
 
 console.log('Starting...')
 const app = new Hono()
 
 app.use(logger())
 app.use(timing())
+app.use('*', datastarMiddleware)
 app.use(
 	'*',
 	jsxRenderer(({ children }) => <html>{children}</html>, { docType: true }),

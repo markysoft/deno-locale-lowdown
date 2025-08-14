@@ -19,7 +19,7 @@ export function TrainDeparturesList(
 	}
 
 	function getTrainUrl(station: { crs: string }) {
-		return `$trainController.abort(); $trainController = new AbortController(); @get('/travel/train/${station.crs.toLowerCase()}', {requestCancellation: $trainController})`
+		return `$station='${station.crs}'; $trainController.abort(); $trainController = new AbortController(); @get('/travel/train', {requestCancellation: $trainController})`
 	}
 
 	return (
