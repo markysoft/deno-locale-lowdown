@@ -19,7 +19,7 @@ const app = new Hono()
 app.get('/bus', async (c) => {
 	const travelSettings = getAppSettings().travel
 
-	const updateBusTimes = async () => {
+	const updateBusTimes = () => {
 		const now = new Date()
 		const nextBusFrom = getNextBusFromMalton(
 			now,

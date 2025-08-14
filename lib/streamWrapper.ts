@@ -2,7 +2,7 @@ import { Context } from 'hono'
 import { stream, streamSSE } from 'hono/streaming'
 import { StreamingApi } from 'hono/utils/stream'
 
-export async function streamWrapper(
+export function streamWrapper(
 	c: Context,
 	asyncFunction: () => Promise<string>,
 	intervalSeconds: number = 10,
@@ -28,7 +28,7 @@ export async function streamWrapper(
 			}
 			console.log(`Stream ended after ${counter} events.`)
 		},
-		async (err, stream) => {
+		(err, stream) => {
 			stream.writeln('An error occurred!')
 			console.error(err)
 			return Promise.resolve()
