@@ -6,14 +6,21 @@ export function streamWrapper(
 	c: Context,
 	asyncFunction: () => Promise<string>,
 	intervalSeconds: number = 10,
-	maxEvents: number = 10,
+	maxEvents: number = 30,
 ) {
 	return streamSSE(
 		c,
 		async (stream) => {
 			let id = 0
 			let counter = 0
-			while (true && counter < maxEvents) {
+			let isRunning = true
+
+			stream.onAbort(() => {
+				console.log('Stream aborted!')
+				isRunning = false
+			})
+
+			while (isRunning && counter < maxEvents) {
 				counter++
 				const element = await asyncFunction()
 				console.log(`Sending event ${counter}`)
