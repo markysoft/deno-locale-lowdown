@@ -41,7 +41,7 @@ export function streamWrapper2(
 	c: Context,
 	asyncFunction: (stream: StreamingApi) => Promise<void>,
 	intervalSeconds: number = 60,
-	maxEvents: number = 10,
+	maxEvents: number = 60,
 ) {
 	return stream(
 		c,

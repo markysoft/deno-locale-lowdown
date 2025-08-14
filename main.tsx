@@ -1,5 +1,4 @@
 import { Hono } from 'hono'
-import { stream, streamSSE, streamText } from 'hono/streaming'
 import { logger } from 'hono/logger'
 import { timing } from 'hono/timing'
 import { jsxRenderer } from 'hono/jsx-renderer'
@@ -10,7 +9,6 @@ import travel from './routes/travel/index.tsx'
 import bins from './routes/bins/index.tsx'
 import weather from './routes/weather/index.tsx'
 import tides from './routes/tides/index.tsx'
-import { streamWrapper } from './lib/streamWrapper.ts'
 import { ErrorArticle } from './routes/home/components/ErrorArticle.tsx'
 import { datastarMiddleware } from './lib/datastar.tsx'
 
@@ -35,37 +33,6 @@ app.route('/weather', weather)
 app.route('/bins', bins)
 
 app.notFound((c) => c.text('No such route, try another!', 404))
-
-let id = 0
-
-app.get('/sse', async (c) => {
-	return streamWrapper(c, async () => {
-		const message = `It is ${new Date().toISOString()}`
-		return Promise.resolve('<div id="travel-bus">' + message + '</div>')
-	})
-})
-
-app.get('/sse2', async (c) => {
-	return streamSSE(
-		c,
-		async (stream) => {
-			while (true) {
-				const message = `It is ${new Date().toISOString()}`
-				await stream.writeSSE({
-					data: 'elements <div id="travel-bus">' + message + '</div>',
-					event: 'datastar-patch-elements',
-					id: String(id++),
-				})
-				await stream.sleep(1000)
-			}
-		},
-		(err, stream) => {
-			stream.writeln('An error occurred!')
-			console.error(err)
-			return Promise.resolve()
-		},
-	)
-})
 
 app.onError((err: Error, c) => {
 	console.error(`${err}`)

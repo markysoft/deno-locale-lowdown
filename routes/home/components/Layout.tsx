@@ -105,14 +105,14 @@ export const Layout: FC = () => {
 									class='content'
 									data-signals='
 									{ 
-							 			trainController: new AbortController(),
+							 			_trainController: new AbortController(),
 										station: "MLT"
 									}'
 								>
 									<div
 										id='train-departures'
 										data-indicator='_fetchTrains'
-										data-on-load="@get('/travel/train')"
+										data-on-load="@get('/travel/train', {requestCancellation: $_trainController})"
 									>
 										<div class='spinner box has-text-centered'>
 											<div class='fa fa-spinner fa-spin'>
