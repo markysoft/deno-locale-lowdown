@@ -36,7 +36,7 @@ export async function streamWrapper(
 	)
 }
 
-export async function streamWrapper2(
+export function streamWrapper2(
 	name: string,
 	c: Context,
 	asyncFunction: (stream: StreamingApi) => Promise<void>,
