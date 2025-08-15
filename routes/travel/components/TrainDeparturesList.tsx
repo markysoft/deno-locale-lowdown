@@ -16,10 +16,6 @@ export function TrainDeparturesList({ departures }: { departures: Departures }) 
 		return departures.crs !== 'MLT'
 	}
 
-	function getTrainUrl(station: { crs: string }) {
-		return `$station='${station.crs}'; $_trainController.abort(); $_trainController = new AbortController(); @get('/travel/train', {requestCancellation: $_trainController})`
-	}
-
 	return (
 		<div id='train-departures'>
 			<h2 class='title has-text-primary-15'>Trains</h2>
@@ -35,7 +31,12 @@ export function TrainDeparturesList({ departures }: { departures: Departures }) 
 								>
 									<a
 										aria-label={`get ${station.name} train times`}
-										data-on-click__prevent={getTrainUrl(station)}
+										data-on-click__prevent={`
+											$station='${station.crs}';
+										  $_trainController.abort();
+											$_trainController = new AbortController(); 
+											@get('/travel/train', {requestCancellation: $_trainController})
+										`}
 									>
 										{station.name}
 									</a>

@@ -22,7 +22,9 @@ export function streamWrapper(
 
 			while (isRunning && counter < maxEvents) {
 				counter++
-				const element = await asyncFunction()
+				let element = await asyncFunction()
+				// Sanitize: replace newline followed by whitespace with semicolon to stop it breaking hte html
+				element = element.replace(/\n\s+/g, ';')
 				console.log(`Sending event ${counter}`)
 				await stream.writeSSE({
 					data: 'elements ' + element,
