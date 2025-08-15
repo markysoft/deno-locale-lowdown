@@ -42,13 +42,12 @@ app.get('/bus', async (c) => {
 
 app.get('/train', async (c) => {
   const { station } = TrainRequestSchema.parse(c.get('signals'))
-  console.log(`Fetching train departures for station: ${station}`)
   const travelSettings = getAppSettings().travel
 
   const updateTrainDepartures = async () => {
     const departures = await cacheWrapper<Departures>(
       `train-${station}`,
-      oneMinuteInSeconds - 10,
+      10,
       () => getDepartures(station, travelSettings.railApiKey),
     )
     const htmlString = (<TrainDeparturesList departures={departures} />)

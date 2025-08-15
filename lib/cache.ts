@@ -1,16 +1,31 @@
+// deno-lint-ignore-file
 const cacheSimple = new Map<string, any>()
 
 const cache = await caches.open('default')
 
-export async function saveToWebCache(req: string, response: Response, expiresInMins: number): Promise<void> {
-  const expiringResponse = response.clone()
+export async function saveToWebCache(req: string, item: any, expiresInMins: number): Promise<void> {
+  const expiringResponse = new Response(JSON.stringify(item), {
+    headers: { 'Content-Type': 'application/json' },
+  })
   const expires = new Date(Date.now() + expiresInMins * 60 * 1000)
   expiringResponse.headers.set('Expires', expires.toUTCString())
   await cache.put(req, expiringResponse)
 }
 
-export async function getFromWebCache(req: string): Promise<Response | undefined> {
-  return await cache.match(req)
+function isExpired(value: Response | undefined) {
+  const expires = value?.headers.get('Expires')
+  if (expires == undefined) {
+    return true
+  }
+  return new Date(expires) < new Date()
+}
+
+export async function getFromWebCache(req: string): Promise<any | undefined> {
+  const value = await cache.match(req)
+  if (isExpired(value)) {
+    return undefined
+  }
+  return value ? value.json() : undefined
 }
 
 export async function clearWebCache(req: string): Promise<void> {
