@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import { WeekAheadDay } from '../schemas/Weather.ts'
 import { WeatherCard } from './WeatherCard.tsx'
 
