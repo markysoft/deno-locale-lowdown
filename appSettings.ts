@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { StreamManager } from './lib/StreamManager.ts'
 
 const AppSettingsSchema = z.object({
 	travel: z.object({
@@ -40,10 +39,4 @@ export function getAppSettings(): AppSettings {
 		})
 	}
 	return appSettings
-}
-
-const streamManager = new StreamManager()
-
-export function getStreamManager() {
-	return streamManager
 }

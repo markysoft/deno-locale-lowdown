@@ -30,14 +30,14 @@ export function streamWrapper(
 					id: String(id++),
 				})
 				console.log('sleeping for ' + intervalSeconds + ' seconds')
-				await stream.sleep(intervalSeconds * 1000) // Sleep for the specified interval
+				await stream.sleep(intervalSeconds * 1000)
 				console.log('woke up after ' + intervalSeconds + ' seconds')
 			}
 			console.log(`Stream ended after ${counter} events.`)
 		},
 		(err, stream) => {
 			stream.writeln('An error occurred!')
-			console.error(err)
+			console.error('stream error', err)
 			return Promise.resolve()
 		},
 	)
