@@ -33,8 +33,7 @@ app.get('/bus', async (c) => {
 			nextBusTo,
 		})
 
-		const htmlString = (<NextBusCard busTimes={busTimes} />)
-			.toString()
+		const htmlString = (<NextBusCard busTimes={busTimes} />).toString()
 		return Promise.resolve(htmlString)
 	}
 
