@@ -45,13 +45,8 @@ app.get('/train', async (c) => {
   const travelSettings = getAppSettings().travel
 
   const updateTrainDepartures = async () => {
-    const departures = await cacheWrapper<Departures>(
-      `train-${station}`,
-      10,
-      () => getDepartures(station, travelSettings.railApiKey),
-    )
-    const htmlString = (<TrainDeparturesList departures={departures} />)
-      .toString()
+    const departures = await getDepartures(station, travelSettings.railApiKey)
+    const htmlString = (<TrainDeparturesList departures={departures} />).toString()
     return htmlString
   }
 

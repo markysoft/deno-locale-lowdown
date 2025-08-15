@@ -10,16 +10,12 @@ function getUrl(stationCode: string): string {
 export async function getDepartures(stationCode: string, apiKey: string): Promise<Departures> {
   let jsonVal = await getFromWebCache(getUrl(stationCode))
   if (jsonVal == undefined) {
-    console.log('************** cache expired ***********')
     const result = await fetch(
       getUrl(stationCode),
       { headers: { 'x-apikey': apiKey } },
     )
     jsonVal = await result.json()
     await saveToWebCache(getUrl(stationCode), jsonVal, 1)
-
-    //const cacheVal = await getFromWebCache(getUrl(stationCode))
-    //console.log('Cached value after:', cacheVal)
   }
 
   return DeparturesSchema.parse(jsonVal)

@@ -7,6 +7,8 @@ export async function saveToWebCache(req: string, item: any, expiresInMins: numb
   const expiringResponse = new Response(JSON.stringify(item), {
     headers: { 'Content-Type': 'application/json' },
   })
+	
+		console.log('Crating cache for:', req)
   const expires = new Date(Date.now() + expiresInMins * 60 * 1000)
   expiringResponse.headers.set('Expires', expires.toUTCString())
   await cache.put(req, expiringResponse)
@@ -23,8 +25,10 @@ function isExpired(value: Response | undefined) {
 export async function getFromWebCache(req: string): Promise<any | undefined> {
   const value = await cache.match(req)
   if (isExpired(value)) {
+		console.log('Cache expired for:', req)
     return undefined
   }
+		console.log('returning cache for:', req)
   return value ? value.json() : undefined
 }
 
