@@ -7,9 +7,7 @@ export function BankHolidayList(
 ) {
 	return (
 		<div id='bank-holidays-upcoming'>
-			{bankHolidays.map((bankHoliday: BankHoliday) => (
-				<BankHolidayCard bankHoliday={bankHoliday} />
-			))}
+			{bankHolidays.map((bankHoliday: BankHoliday) => <BankHolidayCard bankHoliday={bankHoliday} />)}
 		</div>
 	)
 }

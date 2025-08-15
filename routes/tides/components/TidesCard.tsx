@@ -13,8 +13,7 @@ export function TidesCard({ tideRecord }: { tideRecord: TideRecord }) {
 					<ul class='no-bullets'>
 						{tideRecord.tides.map((tide) => (
 							<li>
-								<strong>{tide.type}</strong> tide at{' '}
-								<strong>{tide.time}</strong> ({tide.height}m)
+								<strong>{tide.type}</strong> tide at <strong>{tide.time}</strong> ({tide.height}m)
 							</li>
 						))}
 					</ul>

@@ -17,19 +17,15 @@ export function WeatherCard({ weekAheadDay }: { weekAheadDay: WeekAheadDay }) {
 						))}
 					</p>
 					<p>
-						<strong>Chance of Rain:</strong>{' '}
-						{weekAheadDay.weather.chanceOfRain}
+						<strong>Chance of Rain:</strong> {weekAheadDay.weather.chanceOfRain}
 					</p>
 					<p>
-						<strong>Temp:</strong> {weekAheadDay.weather.temp.min}
-						{' '}
-						to {weekAheadDay.weather.temp.max}°C
+						<strong>Temp:</strong> {weekAheadDay.weather.temp.min} to {weekAheadDay.weather.temp.max}°C
 					</p>
 
 					<p>
 						<strong>Wind:</strong>
-						{weekAheadDay.weather.wind.speed} MPH{' '}
-						{weekAheadDay.weather.wind.degrees}
+						{weekAheadDay.weather.wind.speed} MPH {weekAheadDay.weather.wind.degrees}
 						<br />
 						Gusts up to {weekAheadDay.weather.wind.maxSpeed} MPH
 					</p>

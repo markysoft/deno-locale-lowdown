@@ -1,9 +1,7 @@
-import { Departure, Departures } from '../services/trainTimes.ts'
+import { Departure, Departures } from './schemas/Train.ts'
 import { TrainDepartureCard } from './TrainDepartureCard.tsx'
 
-export function TrainDeparturesList(
-	{ departures }: { departures: Departures },
-) {
+export function TrainDeparturesList({ departures }: { departures: Departures }) {
 	const stationList = [
 		{ name: 'Malton', crs: 'MLT' },
 		{ name: "Scarbo'", crs: 'SCA' },
@@ -25,8 +23,7 @@ export function TrainDeparturesList(
 	return (
 		<div id='train-departures'>
 			<h2 class='title has-text-primary-15'>Trains</h2>
-			
-			<div data-signals="{'_fetchTrains': true}"></div>
+
 			<div class='card'>
 				<header class='card-header'>
 					<div class='tabs'>
@@ -38,8 +35,7 @@ export function TrainDeparturesList(
 								>
 									<a
 										aria-label={`get ${station.name} train times`}
-										data-on-click={getTrainUrl(station)}
-										data-indicator='_fetchTrains'
+										data-on-click__prevent={getTrainUrl(station)}
 									>
 										{station.name}
 									</a>
@@ -50,10 +46,7 @@ export function TrainDeparturesList(
 				</header>
 				<div class='card-content'>
 					<p class='content'>
-						Last updated: <strong>{departures.generatedAt}</strong>{' '}
-						<span id='train-spinner' data-show='$_fetchTrains'>
-							<i class='fa fa-sync fa-spin'></i>
-						</span>
+						Last updated: <strong>{departures.generatedAt}</strong>
 					</p>
 					{departures.trainServices.map(
 						(service: Departure, index: number) => {

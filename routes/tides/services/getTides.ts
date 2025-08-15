@@ -1,12 +1,7 @@
 import { decode } from 'html-entities'
 import { parse } from 'node-html-parser'
 
-import {
-	Tide,
-	TideRecord,
-	TideRecordSchema,
-	TideSchema,
-} from '../schemas/Tide.ts'
+import { Tide, TideRecord, TideRecordSchema, TideSchema } from '../schemas/Tide.ts'
 export async function getTidesRssText(location: string): Promise<string> {
 	const tidesResponse = await fetch(
 		`https://www.tidetimes.org.uk/${location}-tide-times.rss`,
@@ -47,9 +42,7 @@ export function getTideRecord(
 ): TideRecord {
 	const rawTides = getRawTides(rssText)
 	const date: Date = getPubDate(rssText)
-	const tides = rawTides.map(parseTide).filter((t) =>
-		t !== undefined
-	) as Tide[]
+	const tides = rawTides.map(parseTide).filter((t) => t !== undefined) as Tide[]
 	return TideRecordSchema.parse({ location: tideLocation, tides, date })
 }
 

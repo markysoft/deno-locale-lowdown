@@ -34,8 +34,7 @@ export function getNextBinDay(currentDate: Date): BinDay {
 		return {
 			date: nextWeds,
 			type: 'red bin',
-			description:
-				'Recycling collection: glasses, cans, plastics, and cartons',
+			description: 'Recycling collection: glasses, cans, plastics, and cartons',
 		}
 	}
 	return {

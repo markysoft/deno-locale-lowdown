@@ -1,8 +1,7 @@
 // Helper function for datastar SSE events
 export async function patchElement(stream: any, elements: string) {
 	const encoder = new TextEncoder()
-	const sseMessage =
-		`event: datastar-patch-elements\ndata: elements ${elements}\n\n`
+	const sseMessage = `event: datastar-patch-elements\ndata: elements ${elements}\n\n`
 	await stream.write(encoder.encode(sseMessage))
 }
 

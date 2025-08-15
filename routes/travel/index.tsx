@@ -2,13 +2,15 @@ import { Hono } from 'hono'
 import { NextBusCard } from './components/NextBusCard.tsx'
 import { getNextBusFromMalton, getNextBusToMalton } from './services/getNextBus.ts'
 import { getAppSettings } from '@/appSettings.ts'
-import { Departures, getDepartures } from './services/trainTimes.ts'
+import { getDepartures } from './services/trainTimes.ts'
 import { TrainDeparturesList } from './components/TrainDeparturesList.tsx'
 import { streamWrapper } from '@/lib/streamWrapper.ts'
 import { oneMinuteInSeconds } from '@/constants.ts'
 import { cacheWrapper } from '@/lib/cache.ts'
 
 import { z } from 'zod'
+import { applyBritishSummerTime, toHourMinuteString } from '../../lib/utils.ts'
+import { Departures } from './components/schemas/Train.ts'
 
 export const TrainRequestSchema = z.object({
 	station: z.string(),
@@ -21,12 +23,12 @@ app.get('/bus', async (c) => {
 
 	const updateBusTimes = () => {
 		const now = new Date()
-		const nextBusFrom = getNextBusFromMalton(
-			now,
-			travelSettings.townBusStop,
-		)
+		const nextBusFrom = getNextBusFromMalton(now, travelSettings.townBusStop)
 		const nextBusTo = getNextBusToMalton(now, travelSettings.homeBusStop)
-		const htmlString = (<NextBusCard nextBusFrom={nextBusFrom} nextBusTo={nextBusTo} />)
+		const lastUpdated = toHourMinuteString(
+			applyBritishSummerTime(new Date()),
+		)
+		const htmlString = (<NextBusCard lastUpdated={lastUpdated} nextBusFrom={nextBusFrom} nextBusTo={nextBusTo} />)
 			.toString()
 		return Promise.resolve(htmlString)
 	}

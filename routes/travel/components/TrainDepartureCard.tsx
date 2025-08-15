@@ -8,8 +8,7 @@ export function TrainDepartureCard(
 			<div class='level-left'>
 				<div class='level-item has-text-centered has-text-left-desktop'>
 					<p class='subtitle is-6'>
-						<strong>{service.standardTime}</strong> to{' '}
-						{service.destination}{' '}
+						<strong>{service.standardTime}</strong> to {service.destination}{' '}
 						{showPlatforms ? `(platform ${service.platform})` : ''}
 					</p>
 				</div>
@@ -18,13 +17,11 @@ export function TrainDepartureCard(
 				<p class='level-item'>
 					{service.isCancelled ? <strong>Cancelled</strong> : (
 						<span>
-							{service.expected === 'On time'
-								? service.expected
-								: (
-									<strong>
-										Expected {service.expected}
-									</strong>
-								)}
+							{service.expected === 'On time' ? service.expected : (
+								<strong>
+									Expected {service.expected}
+								</strong>
+							)}
 						</span>
 					)}
 				</p>

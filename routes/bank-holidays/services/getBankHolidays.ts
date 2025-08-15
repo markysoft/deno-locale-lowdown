@@ -16,8 +16,7 @@ export async function getBankHolidays(): Promise<BankHoliday[]> {
 	} = await holidaysResponse.json()
 
 	const now = new Date()
-	const filter = (e: BankHoliday) =>
-		e.date > now && e.date < getOneYearsTime(now)
+	const filter = (e: BankHoliday) => e.date > now && e.date < getOneYearsTime(now)
 
 	return z.array(BankHolidaySchema).parse(events).filter(filter)
 }

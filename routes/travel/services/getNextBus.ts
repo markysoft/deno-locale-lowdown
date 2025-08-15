@@ -1,8 +1,4 @@
-import {
-	applyBritishSummerTime,
-	dayOfWeekFromDayNumber,
-	toHourMinuteString,
-} from '@/lib/utils.ts'
+import { applyBritishSummerTime, dayOfWeekFromDayNumber, toHourMinuteString } from '@/lib/utils.ts'
 import { BusStop, BusTime, busTimes } from './busTimes.ts'
 
 export function getNextBusToMalton(currentTime: Date, busStop: string): string {
@@ -41,14 +37,10 @@ export function getNextBus(
 		return `${formatTime(nextStop.at)} today`
 	}
 	const tomorrowInt = getTomorrowDayIndex(dayOfWeek)
-	const tomorrowBus = myStopTimes.find((time: BusTime) =>
-		time.daysOfWeek.includes(tomorrowInt)
-	)
+	const tomorrowBus = myStopTimes.find((time: BusTime) => time.daysOfWeek.includes(tomorrowInt))
 
 	if (tomorrowBus) {
-		return `${formatTime(tomorrowBus.at)} on ${
-			dayOfWeekFromDayNumber(tomorrowInt)
-		}`
+		return `${formatTime(tomorrowBus.at)} on ${dayOfWeekFromDayNumber(tomorrowInt)}`
 	}
 	return 'No buses available'
 }
