@@ -19,8 +19,8 @@ app.use(logger())
 app.use(timing())
 app.use('*', datastarMiddleware)
 app.use(
-	'*',
-	jsxRenderer(({ children }) => <html>{children}</html>, { docType: true }),
+  '*',
+  jsxRenderer(({ children }) => <html>{children}</html>, { docType: true }),
 )
 
 app.get('/favicon.ico', (c) => c.body(null, 204))
@@ -35,9 +35,9 @@ app.route('/bins', bins)
 app.notFound((c) => c.text('No such route, try another!', 404))
 
 app.onError((err: Error, c) => {
-	console.error(`${err}`)
-	console.error(`${err.stack}`)
-	const message = err instanceof Error ? err.message : JSON.stringify(err)
-	return c.html(<ErrorArticle message={message} />)
+  console.error(`${err}`)
+  console.error(`${err.stack}`)
+  const message = err instanceof Error ? err.message : JSON.stringify(err)
+  return c.html(<ErrorArticle message={message} />)
 })
 Deno.serve({ port: 3000 }, app.fetch)

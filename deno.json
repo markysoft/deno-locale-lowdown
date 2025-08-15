@@ -1,26 +1,26 @@
 {
-	"imports": {
-		"hono": "jsr:@hono/hono@^4.9.0",
-		"html-entities": "npm:html-entities@^2.6.0",
-		"node-html-parser": "npm:node-html-parser@^7.0.1",
-		"zod": "npm:zod@^4.0.17",
-		"@/": "./"
-	},
-	"tasks": {
-		"start": "deno run --allow-net  --watch --allow-env=\"SPIN_*\" main.tsx"
-	},
-	"compilerOptions": {
-		"jsx": "precompile",
-		"jsxImportSource": "hono/jsx"
-	},
-	"fmt": {
-		"useTabs": true,
-		"lineWidth": 120,
-		"indentWidth": 4,
-		"semiColons": false,
-		"singleQuote": true,
-		"proseWrap": "preserve",
-		"include": ["./"],
-		"exclude": ["src/testdata/", "src/fixtures/**/*.ts"]
-	}
+  "imports": {
+    "hono": "jsr:@hono/hono@^4.9.0",
+    "html-entities": "npm:html-entities@^2.6.0",
+    "node-html-parser": "npm:node-html-parser@^7.0.1",
+    "zod": "npm:zod@^4.0.17",
+    "@/": "./"
+  },
+  "tasks": {
+    "start": "deno run --allow-net  --watch --allow-env=\"SPIN_*\" main.tsx"
+  },
+  "compilerOptions": {
+    "jsx": "precompile",
+    "jsxImportSource": "hono/jsx"
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 120,
+    "indentWidth": 2,
+    "semiColons": false,
+    "singleQuote": true,
+    "proseWrap": "preserve",
+    "include": ["./"],
+    "exclude": ["src/testdata/", "src/fixtures/**/*.ts"]
+  }
 }

@@ -14,49 +14,49 @@ import { Departures } from './components/schemas/Train.ts'
 import { BusTimesSchema } from './components/schemas/Bus.ts'
 
 export const TrainRequestSchema = z.object({
-	station: z.string(),
+  station: z.string(),
 })
 
 const app = new Hono()
 
 app.get('/bus', async (c) => {
-	const travelSettings = getAppSettings().travel
+  const travelSettings = getAppSettings().travel
 
-	const updateBusTimes = () => {
-		const now = new Date()
-		const nextBusFrom = getNextBusFromMalton(now, travelSettings.townBusStop)
-		const nextBusTo = getNextBusToMalton(now, travelSettings.homeBusStop)
+  const updateBusTimes = () => {
+    const now = new Date()
+    const nextBusFrom = getNextBusFromMalton(now, travelSettings.townBusStop)
+    const nextBusTo = getNextBusToMalton(now, travelSettings.homeBusStop)
 
-		const busTimes = BusTimesSchema.parse({
-			lastUpdated: now,
-			nextBusFrom,
-			nextBusTo,
-		})
+    const busTimes = BusTimesSchema.parse({
+      lastUpdated: now,
+      nextBusFrom,
+      nextBusTo,
+    })
 
-		const htmlString = (<NextBusCard busTimes={busTimes} />).toString()
-		return Promise.resolve(htmlString)
-	}
+    const htmlString = (<NextBusCard busTimes={busTimes} />).toString()
+    return Promise.resolve(htmlString)
+  }
 
-	return await streamWrapper(c, updateBusTimes, oneMinuteInSeconds, 60)
+  return await streamWrapper(c, updateBusTimes, oneMinuteInSeconds, 60)
 })
 
 app.get('/train', async (c) => {
-	const { station } = TrainRequestSchema.parse(c.get('signals'))
-	console.log(`Fetching train departures for station: ${station}`)
-	const travelSettings = getAppSettings().travel
+  const { station } = TrainRequestSchema.parse(c.get('signals'))
+  console.log(`Fetching train departures for station: ${station}`)
+  const travelSettings = getAppSettings().travel
 
-	const updateTrainDepartures = async () => {
-		const departures = await cacheWrapper<Departures>(
-			`train-${station}`,
-			oneMinuteInSeconds - 10,
-			() => getDepartures(station, travelSettings.railApiKey),
-		)
-		const htmlString = (<TrainDeparturesList departures={departures} />)
-			.toString()
-		return htmlString
-	}
+  const updateTrainDepartures = async () => {
+    const departures = await cacheWrapper<Departures>(
+      `train-${station}`,
+      oneMinuteInSeconds - 10,
+      () => getDepartures(station, travelSettings.railApiKey),
+    )
+    const htmlString = (<TrainDeparturesList departures={departures} />)
+      .toString()
+    return htmlString
+  }
 
-	return await streamWrapper(c, updateTrainDepartures, oneMinuteInSeconds, 60)
+  return await streamWrapper(c, updateTrainDepartures, oneMinuteInSeconds, 60)
 })
 
 export default app
