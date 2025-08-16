@@ -38,14 +38,6 @@ export async function clearWebCache(req: string): Promise<void> {
   await cache.delete(safeKey(req))
 }
 
-export function saveToCache(key: string, value: any): void {
-  cacheSimple.set(key, value)
-}
-
-export function getFromCache(key: string): any | undefined {
-  return cacheSimple.get(key)
-}
-
 export async function webCacheWrapper<T>(
   url: string,
   expiresInSeconds: number,
