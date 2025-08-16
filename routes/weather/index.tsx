@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { cacheWrapper } from '@/lib/cache.ts'
+import { webCacheWrapper } from '@/lib/cache.ts'
 import { oneHourInSeconds } from '@/constants.ts'
 import { getTodayWeather, getWeekWeather } from './services/getOpenWeather.ts'
 import { WeekAheadDay } from './schemas/Weather.ts'
@@ -10,7 +10,7 @@ const app = new Hono()
 
 app.get('/today', async (c) => {
   c.header('Cache-Control', `public, max-age=${oneHourInSeconds}`)
-  const weekAheadDay = await cacheWrapper<WeekAheadDay>(
+  const weekAheadDay = await webCacheWrapper<WeekAheadDay>(
     'weather-day',
     oneHourInSeconds,
     () => getTodayWeather(),
@@ -24,7 +24,7 @@ app.get('/today', async (c) => {
 
 app.get('/week-ahead', async (c) => {
   c.header('Cache-Control', `public, max-age=${oneHourInSeconds}`)
-  const weekAhead = await cacheWrapper<WeekAheadDay[]>(
+  const weekAhead = await webCacheWrapper<WeekAheadDay[]>(
     'weather-week',
     oneHourInSeconds,
     () => getWeekWeather(),

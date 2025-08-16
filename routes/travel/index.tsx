@@ -8,10 +8,10 @@ import { getDepartures } from './services/trainTimes.ts'
 import { TrainDeparturesList } from './components/TrainDeparturesList.tsx'
 import { streamWrapper } from '@/lib/streamWrapper.ts'
 import { oneMinuteInSeconds } from '@/constants.ts'
-import { cacheWrapper } from '@/lib/cache.ts'
+import { webCacheWrapper } from '@/lib/cache.ts'
 
-import { Departures } from './components/schemas/Train.ts'
 import { BusTimesSchema } from './components/schemas/Bus.ts'
+import { Departures } from './components/schemas/Train.ts'
 
 export const TrainRequestSchema = z.object({
   station: z.string(),
@@ -45,7 +45,11 @@ app.get('/train', async (c) => {
   const travelSettings = getAppSettings().travel
 
   const updateTrainDepartures = async () => {
-    const departures = await getDepartures(station, travelSettings.railApiKey)
+    const departures = await webCacheWrapper<Departures>(
+      `trains-${station}`,
+      oneMinuteInSeconds,
+      () => getDepartures(station, travelSettings.railApiKey),
+    )
     const htmlString = (<TrainDeparturesList departures={departures} />).toString()
     return htmlString
   }

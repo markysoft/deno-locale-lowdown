@@ -3,15 +3,18 @@ const cacheSimple = new Map<string, any>()
 
 const cache = await caches.open('default')
 
-export async function saveToWebCache(req: string, item: any, expiresInMins: number): Promise<void> {
+function safeKey(req: string): string {
+  return (!req.startsWith('http://') && !req.startsWith('https://')) ? 'http://' + req : req
+}
+
+export async function saveToWebCache(req: string, item: any, expiresInSeconds: number): Promise<void> {
   const expiringResponse = new Response(JSON.stringify(item), {
     headers: { 'Content-Type': 'application/json' },
   })
-	
-		console.log('Crating cache for:', req)
-  const expires = new Date(Date.now() + expiresInMins * 60 * 1000)
+
+  const expires = new Date(Date.now() + expiresInSeconds * 1000)
   expiringResponse.headers.set('Expires', expires.toUTCString())
-  await cache.put(req, expiringResponse)
+  await cache.put(safeKey(req), expiringResponse)
 }
 
 function isExpired(value: Response | undefined) {
@@ -23,17 +26,16 @@ function isExpired(value: Response | undefined) {
 }
 
 export async function getFromWebCache(req: string): Promise<any | undefined> {
-  const value = await cache.match(req)
+  const value = await cache.match(safeKey(req))
   if (isExpired(value)) {
-		console.log('Cache expired for:', req)
+    console.log('Cache expired for:', req)
     return undefined
   }
-		console.log('returning cache for:', req)
   return value ? value.json() : undefined
 }
 
 export async function clearWebCache(req: string): Promise<void> {
-  await cache.delete(req)
+  await cache.delete(safeKey(req))
 }
 
 export function saveToCache(key: string, value: any): void {
@@ -44,25 +46,18 @@ export function getFromCache(key: string): any | undefined {
   return cacheSimple.get(key)
 }
 
-interface CachedValue<T> {
-  value: T
-  expiresAt?: number
-}
-
-export async function cacheWrapper<T>(
-  key: string,
+export async function webCacheWrapper<T>(
+  url: string,
   expiresInSeconds: number,
   fn: () => Promise<T>,
 ): Promise<T> {
-  const cached = getFromCache(key) as CachedValue<T> | undefined
-  if (cached?.expiresAt && cached.expiresAt > Date.now()) {
-    console.log('Returning cached value', key)
-    return cached.value
+  const cached = await getFromWebCache(url) as T | undefined
+  if (cached !== undefined) {
+    console.log('Returning cached value', url)
+    return cached
   }
   const result = await fn()
-  const expiry = Date.now() + expiresInSeconds * 1000
-  const cachedValue: CachedValue<T> = { expiresAt: expiry, value: result }
-  console.log('Updating cache', key)
-  saveToCache(key, cachedValue)
+  console.log('Updating cache', url)
+  await saveToWebCache(url, result, expiresInSeconds)
   return result
 }
