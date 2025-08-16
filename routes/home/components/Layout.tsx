@@ -191,7 +191,7 @@ export const Layout: FC = () => {
                     Spin
                   </a>
                 </strong>{' '}
-                and &nbsp;
+                and{' '}
                 <strong>
                   <a href='https://hono.dev' target='_blank'>
                     Hono
@@ -238,12 +238,6 @@ export const Layout: FC = () => {
                 >
                   www.gov.uk
                 </a>
-                <p>
-                  Source available at{' '}
-                  <a href='https://github.com/markysoft/locale-lowdown'>
-                    locale-lowdown
-                  </a>
-                </p>
               </div>
             </footer>
           </div>

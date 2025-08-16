@@ -24,15 +24,13 @@ export function WeatherCard({ weekAheadDay }: { weekAheadDay: WeekAheadDay }) {
           </p>
 
           <p>
-            <strong>Wind:</strong>
-            {weekAheadDay.weather.wind.speed} MPH {weekAheadDay.weather.wind.degrees}
+            <strong>Wind:</strong> {weekAheadDay.weather.wind.speed} MPH {weekAheadDay.weather.wind.degrees}
             <br />
             Gusts up to {weekAheadDay.weather.wind.maxSpeed} MPH
           </p>
 
           <p>
-            <strong>Sunrise:</strong> {weekAheadDay.sun.rise},&nbsp;
-            <strong>Sunset:</strong> {weekAheadDay.sun.set}
+            <strong>Sunrise:</strong> {weekAheadDay.sun.rise}, <strong>Sunset:</strong> {weekAheadDay.sun.set}
           </p>
         </div>
       </div>
