@@ -39,34 +39,32 @@ app.get('/bus', async (c) => {
     return Promise.resolve(htmlString)
   }
 
-  return await streamWrapper(c, updateBusTimes, oneMinuteInSeconds, 60)
+  return await streamWrapper(c, updateBusTimes, 'na', oneMinuteInSeconds, 60)
 })
 
 app.get('/train', async (c) => {
   const trainSignals = TrainRequestSchema.parse(c.get('signals'))
-  const travelSettings = getAppSettings().travel
+
   serviceBus.subscribe(trainSignals.sessionId, (msg) => {
     trainSignals.station = msg.station
-    console.log(`Received message for session ${trainSignals.sessionId}:`, msg)
   })
 
   const updateTrainDepartures = async () => {
     const departures = await webCacheWrapper<Departures>(
       `trains-${trainSignals.station}`,
       oneMinuteInSeconds,
-      () => getDepartures(trainSignals.station, travelSettings.railApiKey),
+      () => getDepartures(trainSignals.station, getAppSettings().travel.railApiKey),
     )
-    const htmlString = (<TrainDeparturesList departures={departures} />).toString()
-    return htmlString
+    return (<TrainDeparturesList departures={departures} />).toString()
   }
 
-  return await streamWrapper(c, updateTrainDepartures, oneMinuteInSeconds, 60)
+  return await streamWrapper(c, updateTrainDepartures, trainSignals.sessionId, oneMinuteInSeconds, 60)
 })
 
 app.post('/train', async (c) => {
   const { station, sessionId } = await c.req.json()
-  console.log(`Received station: ${station}, sessionId: ${sessionId}`)
-  serviceBus.publish(sessionId, { station})
+  console.log(`Switching station to ${station} for session ${sessionId}`)
+  serviceBus.publish(sessionId, { station })
   return c.json({ station, sessionId })
 })
 
