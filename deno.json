@@ -7,7 +7,7 @@
     "@/": "./"
   },
   "tasks": {
-    "start": "deno run --allow-net  --watch --allow-env=\"SPIN_*\" main.tsx"
+    "start": "deno run --allow-net --unstable-kv --watch --allow-env=\"SPIN_*\" main.tsx"
   },
   "compilerOptions": {
     "jsx": "precompile",
