@@ -49,9 +49,6 @@ app.get('/train', async (c) => {
 
   await kv.set(["streaming", trainSignals.sessionId], { item: { station: trainSignals.station }, streaming: true })
   startKvWatcher(kv, trainSignals.sessionId)
-  serviceBus.subscribe(trainSignals.sessionId, (msg) => {
-    trainSignals.station = msg.station
-  })
 
   return await trainStream(c, kv, trainSignals, 30)
 })

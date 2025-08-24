@@ -4,6 +4,7 @@ import { updateTrainDepartures } from './updateTrainDepartures.tsx'
 import { KvSessionSchema, TrainSignals } from '../components/schemas/TrainRequest.ts'
 import { serviceBus } from '../../../lib/serviceBus.ts'
 import { StreamingKeySchema } from '../../../lib/kvBus.ts'
+import { tr } from 'zod/v4/locales'
 
 export async function trainStream(
   c: Context,
@@ -18,7 +19,7 @@ export async function trainStream(
 
 
    serviceBus.subscribe(trainSignals.sessionId, (msg) => {
-     console.log('************** Abort Controller:', msg)
+     trainSignals.station = msg.station
      streamConf.controller.abort() // abort any existing wait
    })
 
