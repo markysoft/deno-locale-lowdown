@@ -12,6 +12,7 @@ import { KvSessionSchema, TrainRequestSchema } from './components/schemas/TrainR
 import { updateTrainDepartures } from './services/updateTrainDepartures.tsx'
 import { watchKvChanges } from './services/watchKVChanges.ts'
 import { trainStream } from './services/trainStream.ts'
+import { startKvWatcher, StreamingKeySchema } from '../../lib/kvBus.ts'
 
 const app = new Hono()
 
@@ -41,30 +42,24 @@ app.get('/bus', async (c) => {
 app.get('/train', async (c) => {
   const trainSignals = TrainRequestSchema.parse(c.get('signals'))
   // update from session if set, rather than taking the 'resumed' one
-  const { value } = await kv.get([trainSignals.sessionId])
-  trainSignals.station = value ? KvSessionSchema.parse(value).station : trainSignals.station
+  const { value } = await kv.get(["streaming", trainSignals.sessionId])
 
-  await kv.set([trainSignals.sessionId], { station: trainSignals.station, streaming: true })
+  const sessionData = value ? StreamingKeySchema.parse(value) : null
+  trainSignals.station = sessionData ? KvSessionSchema.parse(sessionData.item).station : trainSignals.station
+
+  await kv.set(["streaming", trainSignals.sessionId], { item: { station: trainSignals.station }, streaming: true })
+  startKvWatcher(kv, trainSignals.sessionId)
   serviceBus.subscribe(trainSignals.sessionId, (msg) => {
     trainSignals.station = msg.station
   })
 
   return await trainStream(c, kv, trainSignals, 30)
-
-  // return await streamWrapper(
-  //   c,
-  //   () => updateTrainDepartures(trainSignals),
-  //   trainSignals.sessionId,
-  //   oneMinuteInSeconds,
-  //   60,
-  // )
 })
 
 app.post('/train', async (c) => {
   const { station, sessionId } = await c.req.json()
-  await kv.set([sessionId], { station, streaming: true })
   console.log(`Switching station to ${station} for session ${sessionId}`)
-  serviceBus.publish(sessionId, { station })
+  await kv.set(['streaming', sessionId], { streaming: true, item: { station } })
   return c.json({ station, sessionId })
 })
 

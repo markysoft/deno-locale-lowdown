@@ -1,9 +1,9 @@
 import { Context } from 'hono'
 import { streamSSE } from 'hono/streaming'
-//import { waitOrInterrupt } from '../../../lib/waitOrInterrupt.ts'
 import { updateTrainDepartures } from './updateTrainDepartures.tsx'
 import { KvSessionSchema, TrainSignals } from '../components/schemas/TrainRequest.ts'
-import { watchKvChanges } from './watchKVChanges.ts'
+import { serviceBus } from '../../../lib/serviceBus.ts'
+import { StreamingKeySchema } from '../../../lib/kvBus.ts'
 
 export async function trainStream(
   c: Context,
@@ -16,25 +16,12 @@ export async function trainStream(
 
   const streamConf = { controller: new AbortController() }
 
-  async function startKvWatcher(kv: Deno.Kv, key: string[]) {
-    const changes = kv.watch([key])
-    for await (const change of changes) {
-      console.log('**************KV Change:', change)
-      const value = change[0].value
-      if (value) {
-        const sessionData = KvSessionSchema.parse(value)
-        console.log('Session data:', sessionData)
-        if (sessionData.streaming === false) {
-          break
-        }
-      }
-      streamConf.controller.abort() // abort any existing wait
-    }
-    console.log('**************KV Watcher Stopped:', trainSignals.sessionId)
-  }
 
+   serviceBus.subscribe(trainSignals.sessionId, (msg) => {
+     console.log('************** Abort Controller:', msg)
+     streamConf.controller.abort() // abort any existing wait
+   })
 
-  startKvWatcher(kv, [trainSignals.sessionId])
   return streamSSE(
     c,
     async (stream) => {
@@ -44,13 +31,14 @@ export async function trainStream(
       stream.onAbort(async () => {
         console.log('Stream aborted!')
         isRunning = false
-        //controller.abort()
-        await kv.set([trainSignals.sessionId], { station: trainSignals.station, streaming: false })
+        await kv.set(['streaming', trainSignals.sessionId], { streaming: false, item: { station: trainSignals.station } })
       })
 
       while (isRunning) {
-        const { value } = await kv.get([trainSignals.sessionId])
-        trainSignals.station = value ? KvSessionSchema.parse(value).station : trainSignals.station
+        const { value } = await kv.get(["streaming", trainSignals.sessionId])
+        const streamingKey = value ? StreamingKeySchema.parse(value) : null
+        console.log('++++++++++ Streaming Key from KV:', streamingKey)
+        trainSignals.station = streamingKey ? streamingKey.item.station : trainSignals.station
         let element = await updateTrainDepartures(trainSignals)
         // Sanitize: replace newline followed by whitespace with semicolon to stop it breaking the html
         element = element.replace(/\n\s+/g, ';')
