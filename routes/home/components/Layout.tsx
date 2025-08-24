@@ -108,10 +108,9 @@ export const Layout: FC = () => {
                   class='content'
                   data-signals='
 									{ 
-							 			_trainController: new AbortController(),
 										station: "MLT"
 									}'
-                >
+                ><div data-text="$station"></div>
                   <div
                     id='train-departures'
                     data-indicator='_fetchTrains'

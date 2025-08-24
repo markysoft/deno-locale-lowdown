@@ -33,9 +33,9 @@ export function streamWrapper(
           event: 'datastar-patch-elements',
           id: String(id++),
         })
-        console.log('sleeping for ' + intervalSeconds + ' seconds')
+        console.log('sleeping')
         await waitOrInterrupt(intervalSeconds * 1000, sessionId)
-        console.log('woke up after ' + intervalSeconds + ' seconds')
+        console.log('woke up')
       }
       console.log(`Stream ended after ${counter} events.`)
     },

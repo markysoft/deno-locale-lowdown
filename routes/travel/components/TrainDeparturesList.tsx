@@ -31,15 +31,10 @@ export function TrainDeparturesList({ departures }: { departures: Departures }) 
                 >
                   <a
                     aria-label={`get ${station.name} train times`}
-                    data-on-click__prevent={`
-											$station='${station.crs}';
-										  $_trainController.abort();
-											$_trainController = new AbortController(); 
-											@get('/travel/train', {requestCancellation: $_trainController})
-										`}
+                    data-on-click={`$station='${station.crs}';@post('/travel/train')`} 
                   >
                     {station.name}
-                  </a><button type="button" data-on-click={`$station='${station.crs}';@post('/travel/train')`} class="button">{station.name}</button>
+                  </a>
                 </li>
               ))}
             </ul>

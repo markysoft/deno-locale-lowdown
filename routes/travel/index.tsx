@@ -8,10 +8,12 @@ import { oneMinuteInSeconds } from '@/constants.ts'
 import { serviceBus } from '@/lib/serviceBus.ts'
 
 import { BusTimesSchema } from './components/schemas/Bus.ts'
-import { TrainRequestSchema } from './components/schemas/TrainRequest.ts'
+import { KvSessionSchema, TrainRequestSchema } from './components/schemas/TrainRequest.ts'
 import { updateTrainDepartures } from './services/updateTrainDepartures.tsx'
 
 const app = new Hono()
+
+const kv = await Deno.openKv()
 
 app.get('/bus', async (c) => {
   const travelSettings = getAppSettings().travel
@@ -37,6 +39,11 @@ app.get('/bus', async (c) => {
 app.get('/train', async (c) => {
   const trainSignals = TrainRequestSchema.parse(c.get('signals'))
 
+  const session = await kv.get([trainSignals.sessionId])
+
+  const sessionVal = session.value ? KvSessionSchema.parse(session.value) : {station: trainSignals.station}
+  trainSignals.station = sessionVal.station
+
   serviceBus.subscribe(trainSignals.sessionId, (msg) => {
     trainSignals.station = msg.station
   })
@@ -52,6 +59,7 @@ app.get('/train', async (c) => {
 
 app.post('/train', async (c) => {
   const { station, sessionId } = await c.req.json()
+  await kv.set([sessionId], { station })
   console.log(`Switching station to ${station} for session ${sessionId}`)
   serviceBus.publish(sessionId, { station })
   return c.json({ station, sessionId })
