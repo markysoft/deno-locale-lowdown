@@ -9,6 +9,7 @@ import { TrainDeparturesList } from './components/TrainDeparturesList.tsx'
 import { streamWrapper } from '@/lib/streamWrapper.ts'
 import { oneMinuteInSeconds } from '@/constants.ts'
 import { webCacheWrapper } from '@/lib/cache.ts'
+import { serviceBus } from '@/lib/serviceBus.ts'
 
 import { BusTimesSchema } from './components/schemas/Bus.ts'
 import { Departures } from './components/schemas/Train.ts'
@@ -42,15 +43,18 @@ app.get('/bus', async (c) => {
 })
 
 app.get('/train', async (c) => {
-  const { station, sessionId } = TrainRequestSchema.parse(c.get('signals'))
+  const trainSignals = TrainRequestSchema.parse(c.get('signals'))
   const travelSettings = getAppSettings().travel
+  serviceBus.subscribe(trainSignals.sessionId, (msg) => {
+    trainSignals.station = msg.station
+    console.log(`Received message for session ${trainSignals.sessionId}:`, msg)
+  })
 
   const updateTrainDepartures = async () => {
-  console.log(`Session ID: ${sessionId}, Station: ${station}`);
     const departures = await webCacheWrapper<Departures>(
-      `trains-${station}`,
+      `trains-${trainSignals.station}`,
       oneMinuteInSeconds,
-      () => getDepartures(station, travelSettings.railApiKey),
+      () => getDepartures(trainSignals.station, travelSettings.railApiKey),
     )
     const htmlString = (<TrainDeparturesList departures={departures} />).toString()
     return htmlString
@@ -61,7 +65,8 @@ app.get('/train', async (c) => {
 
 app.post('/train', async (c) => {
   const { station, sessionId } = await c.req.json()
-  console.log(`Received station: ${station}, sessionId: ${sessionId}`);
+  console.log(`Received station: ${station}, sessionId: ${sessionId}`)
+  serviceBus.publish(sessionId, { station})
   return c.json({ station, sessionId })
 })
 
