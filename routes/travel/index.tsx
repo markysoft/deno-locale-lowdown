@@ -38,11 +38,9 @@ app.get('/bus', async (c) => {
 
 app.get('/train', async (c) => {
   const trainSignals = TrainRequestSchema.parse(c.get('signals'))
-
-  const session = await kv.get([trainSignals.sessionId])
-
-  const sessionVal = session.value ? KvSessionSchema.parse(session.value) : {station: trainSignals.station}
-  trainSignals.station = sessionVal.station
+  // update from session if set, rather than taking the 'resumed' one
+  const { value } = await kv.get([trainSignals.sessionId])
+  trainSignals.station = value ? KvSessionSchema.parse(value).station : trainSignals.station
 
   serviceBus.subscribe(trainSignals.sessionId, (msg) => {
     trainSignals.station = msg.station
