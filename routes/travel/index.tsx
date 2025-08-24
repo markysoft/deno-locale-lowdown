@@ -15,6 +15,7 @@ import { Departures } from './components/schemas/Train.ts'
 
 export const TrainRequestSchema = z.object({
   station: z.string(),
+  sessionId: z.string(),
 })
 
 const app = new Hono()
@@ -41,10 +42,11 @@ app.get('/bus', async (c) => {
 })
 
 app.get('/train', async (c) => {
-  const { station } = TrainRequestSchema.parse(c.get('signals'))
+  const { station, sessionId } = TrainRequestSchema.parse(c.get('signals'))
   const travelSettings = getAppSettings().travel
 
   const updateTrainDepartures = async () => {
+  console.log(`Session ID: ${sessionId}, Station: ${station}`);
     const departures = await webCacheWrapper<Departures>(
       `trains-${station}`,
       oneMinuteInSeconds,
@@ -55,6 +57,12 @@ app.get('/train', async (c) => {
   }
 
   return await streamWrapper(c, updateTrainDepartures, oneMinuteInSeconds, 60)
+})
+
+app.post('/train', async (c) => {
+  const { station, sessionId } = await c.req.json()
+  console.log(`Received station: ${station}, sessionId: ${sessionId}`);
+  return c.json({ station, sessionId })
 })
 
 export default app

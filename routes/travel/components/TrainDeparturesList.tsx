@@ -39,7 +39,7 @@ export function TrainDeparturesList({ departures }: { departures: Departures }) 
 										`}
                   >
                     {station.name}
-                  </a>
+                  </a><button type="button" data-on-click={`$station='${station.crs}';@post('/travel/train')`} class="button">{station.name}</button>
                 </li>
               ))}
             </ul>

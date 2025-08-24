@@ -1,5 +1,7 @@
 import type { FC } from 'hono/jsx'
-
+function generateSessionId() {
+  return crypto.randomUUID()
+}
 export const Layout: FC = () => {
   return (
     <>
@@ -63,6 +65,7 @@ export const Layout: FC = () => {
                 Network issues. Please try again later.
               </p>
             </div>
+            <div data-signals={`{sessionId: '${generateSessionId()}'}`}></div>
             <div class='columns'>
               <div class='column'>
                 <div class='content'>
