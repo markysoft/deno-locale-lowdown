@@ -44,6 +44,7 @@ app.get('/train', async (c) => {
   const { value } = await kv.get([trainSignals.sessionId])
   trainSignals.station = value ? KvSessionSchema.parse(value).station : trainSignals.station
 
+  await kv.set([trainSignals.sessionId], { station: trainSignals.station, streaming: true })
   serviceBus.subscribe(trainSignals.sessionId, (msg) => {
     trainSignals.station = msg.station
   })
@@ -61,7 +62,7 @@ app.get('/train', async (c) => {
 
 app.post('/train', async (c) => {
   const { station, sessionId } = await c.req.json()
-  await kv.set([sessionId], { station })
+  await kv.set([sessionId], { station, streaming: true })
   console.log(`Switching station to ${station} for session ${sessionId}`)
   serviceBus.publish(sessionId, { station })
   return c.json({ station, sessionId })
