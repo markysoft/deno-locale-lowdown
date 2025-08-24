@@ -1,23 +1,15 @@
 import { Hono } from 'hono'
-import { z } from 'zod'
 
 import { NextBusCard } from './components/NextBusCard.tsx'
 import { getNextBusFromMalton, getNextBusToMalton } from './services/getNextBus.ts'
 import { getAppSettings } from '@/appSettings.ts'
-import { getDepartures } from './services/trainTimes.ts'
-import { TrainDeparturesList } from './components/TrainDeparturesList.tsx'
 import { streamWrapper } from '@/lib/streamWrapper.ts'
 import { oneMinuteInSeconds } from '@/constants.ts'
-import { webCacheWrapper } from '@/lib/cache.ts'
 import { serviceBus } from '@/lib/serviceBus.ts'
 
 import { BusTimesSchema } from './components/schemas/Bus.ts'
-import { Departures } from './components/schemas/Train.ts'
-
-export const TrainRequestSchema = z.object({
-  station: z.string(),
-  sessionId: z.string(),
-})
+import { TrainRequestSchema } from './components/schemas/TrainRequest.ts'
+import { updateTrainDepartures } from './services/updateTrainDepartures.tsx'
 
 const app = new Hono()
 
@@ -49,16 +41,13 @@ app.get('/train', async (c) => {
     trainSignals.station = msg.station
   })
 
-  const updateTrainDepartures = async () => {
-    const departures = await webCacheWrapper<Departures>(
-      `trains-${trainSignals.station}`,
-      oneMinuteInSeconds,
-      () => getDepartures(trainSignals.station, getAppSettings().travel.railApiKey),
-    )
-    return (<TrainDeparturesList departures={departures} />).toString()
-  }
-
-  return await streamWrapper(c, updateTrainDepartures, trainSignals.sessionId, oneMinuteInSeconds, 60)
+  return await streamWrapper(
+    c,
+    () => updateTrainDepartures(trainSignals),
+    trainSignals.sessionId,
+    oneMinuteInSeconds,
+    60,
+  )
 })
 
 app.post('/train', async (c) => {
