@@ -10,6 +10,8 @@ import { serviceBus } from '@/lib/serviceBus.ts'
 import { BusTimesSchema } from './components/schemas/Bus.ts'
 import { KvSessionSchema, TrainRequestSchema } from './components/schemas/TrainRequest.ts'
 import { updateTrainDepartures } from './services/updateTrainDepartures.tsx'
+import { watchKvChanges } from './services/watchKVChanges.ts'
+import { trainStream } from './services/trainStream.ts'
 
 const app = new Hono()
 
@@ -46,13 +48,15 @@ app.get('/train', async (c) => {
     trainSignals.station = msg.station
   })
 
-  return await streamWrapper(
-    c,
-    () => updateTrainDepartures(trainSignals),
-    trainSignals.sessionId,
-    oneMinuteInSeconds,
-    60,
-  )
+  return await trainStream(c, kv, trainSignals, 30)
+
+  // return await streamWrapper(
+  //   c,
+  //   () => updateTrainDepartures(trainSignals),
+  //   trainSignals.sessionId,
+  //   oneMinuteInSeconds,
+  //   60,
+  // )
 })
 
 app.post('/train', async (c) => {
