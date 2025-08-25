@@ -3,8 +3,6 @@ import { streamSSE } from 'hono/streaming'
 import { updateTrainDepartures } from './updateTrainDepartures.tsx'
 import { KvSessionSchema, TrainSignals } from '../components/schemas/TrainRequest.ts'
 import { serviceBus } from '../../../lib/serviceBus.ts'
-import { StreamingKeySchema } from '../../../lib/kvBus.ts'
-import { tr } from 'zod/v4/locales'
 
 export async function trainStream(
   c: Context,
@@ -17,11 +15,13 @@ export async function trainStream(
 
   const streamConf = { controller: new AbortController() }
 
-
    serviceBus.subscribe(trainSignals.sessionId, (msg) => {
-     trainSignals.station = msg.station
-     streamConf.controller.abort() // abort any existing wait
-   })
+    if (trainSignals.station !== msg.station) {
+      trainSignals.station = msg.station
+      console.log(`Station changed to ${trainSignals.station}, cancel wait`)
+      streamConf.controller.abort() // abort any existing wait
+    }
+  })
 
   return streamSSE(
     c,
@@ -30,16 +30,12 @@ export async function trainStream(
       let isRunning = true
 
       stream.onAbort(async () => {
-        console.log('Stream aborted!')
+        console.log('Stream aborted', trainSignals.sessionId, trainSignals.station)
         isRunning = false
         await kv.set(['streaming', trainSignals.sessionId], { streaming: false, item: { station: trainSignals.station } })
       })
 
       while (isRunning) {
-        const { value } = await kv.get(["streaming", trainSignals.sessionId])
-        const streamingKey = value ? StreamingKeySchema.parse(value) : null
-        console.log('++++++++++ Streaming Key from KV:', streamingKey)
-        trainSignals.station = streamingKey ? streamingKey.item.station : trainSignals.station
         let element = await updateTrainDepartures(trainSignals)
         // Sanitize: replace newline followed by whitespace with semicolon to stop it breaking the html
         element = element.replace(/\n\s+/g, ';')
@@ -75,7 +71,7 @@ function waitOrInterrupt(ms: number, signal: AbortSignal): Promise<void> {
     signal.addEventListener('abort', () => {
       console.log('Aborted from event!')
       clearTimeout(timer)
-      resolve()
+      return resolve()
     })
   })
 }
