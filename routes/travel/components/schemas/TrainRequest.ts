@@ -8,7 +8,7 @@ export const TrainRequestSchema = z.object({
 export type TrainSignals = z.infer<typeof TrainRequestSchema>
 
 export const KvSessionSchema = z.object({
-  station: z.string()
+  station: z.string(),
 })
 
 export type KvSession = z.infer<typeof KvSessionSchema>
