@@ -1,12 +1,10 @@
 import { Context } from 'hono'
 import { stream, streamSSE } from 'hono/streaming'
 import { StreamingApi } from 'hono/utils/stream'
-import { waitOrInterrupt } from './waitOrInterrupt.ts'
 
 export function streamWrapper(
   c: Context,
   asyncFunction: () => Promise<string>,
-  sessionId: string,
   intervalSeconds: number = 10,
   maxEvents: number = 30,
 ) {
@@ -25,7 +23,7 @@ export function streamWrapper(
       while (isRunning && counter < maxEvents) {
         counter++
         let element = await asyncFunction()
-        // Sanitize: replace newline followed by whitespace with semicolon to stop it breaking the html
+        // Sanitize: replace newline followed by whitespace with semicolon to stop it breaking hte html
         element = element.replace(/\n\s+/g, ';')
         console.log(`Sending event ${counter}`)
         await stream.writeSSE({
@@ -33,9 +31,9 @@ export function streamWrapper(
           event: 'datastar-patch-elements',
           id: String(id++),
         })
-        console.log('sleeping')
-        await waitOrInterrupt(intervalSeconds * 1000, sessionId)
-        console.log('woke up')
+        console.log('sleeping for ' + intervalSeconds + ' seconds')
+        await stream.sleep(intervalSeconds * 1000)
+        console.log('woke up after ' + intervalSeconds + ' seconds')
       }
       console.log(`Stream ended after ${counter} events.`)
     },
