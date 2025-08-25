@@ -187,10 +187,10 @@ export const Layout: FC = () => {
               <div class='content has-text-centered'>
                 <strong>
                   <a
-                    href='https://developer.fermyon.com/spin/v3/index'
+                    href='https://deno.com/deploy'
                     target='_blank'
                   >
-                    Spin
+                    Deno Deploy
                   </a>
                 </strong>{' '}
                 and{' '}
