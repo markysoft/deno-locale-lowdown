@@ -13,13 +13,13 @@ export async function trainStream(
   const { value } = await kv.get([trainSignals.sessionId])
   trainSignals.station = value ? KvSessionSchema.parse(value).station : trainSignals.station
 
-  const streamConf = { controller: new AbortController() }
+  let waitController = new AbortController()
 
-   serviceBus.subscribe(trainSignals.sessionId, (msg) => {
+  serviceBus.subscribe(trainSignals.sessionId, (msg) => {
     if (trainSignals.station !== msg.station) {
       trainSignals.station = msg.station
       console.log(`Station changed to ${trainSignals.station}, cancel wait`)
-      streamConf.controller.abort() // abort any existing wait
+      waitController.abort() // abort any existing wait
     }
   })
 
@@ -32,7 +32,10 @@ export async function trainStream(
       stream.onAbort(async () => {
         console.log('Stream aborted', trainSignals.sessionId, trainSignals.station)
         isRunning = false
-        await kv.set(['streaming', trainSignals.sessionId], { streaming: false, item: { station: trainSignals.station } })
+        await kv.set(['streaming', trainSignals.sessionId], {
+          streaming: false,
+          item: { station: trainSignals.station },
+        })
       })
 
       while (isRunning) {
@@ -45,10 +48,10 @@ export async function trainStream(
           id: String(id++),
         })
         console.log('sleeping')
-        await waitOrInterrupt(intervalSeconds * 1000, streamConf.controller.signal)
-        if (streamConf.controller.signal.aborted) {
+        await waitOrInterrupt(intervalSeconds * 1000, waitController.signal)
+        if (waitController.signal.aborted) {
           console.log('aborted')
-          streamConf.controller = new AbortController()
+          waitController = new AbortController()
         } else {
           console.log('woke up')
         }
@@ -63,15 +66,16 @@ export async function trainStream(
 }
 function waitOrInterrupt(ms: number, signal: AbortSignal): Promise<void> {
   return new Promise((resolve) => {
-    if (signal.aborted) {
-      console.log('Aborted already!')
-      return resolve()
-    }
-    const timer = setTimeout(resolve, ms)
-    signal.addEventListener('abort', () => {
+    const onAbort = () => {
       console.log('Aborted from event!')
       clearTimeout(timer)
       return resolve()
-    })
+    }
+    signal.addEventListener('abort', onAbort)
+
+    const timer = setTimeout(() => {
+      signal.removeEventListener('abort', onAbort)
+      resolve()
+    }, ms)
   })
 }
