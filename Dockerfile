@@ -1,13 +1,17 @@
-# Use official Deno image
-FROM denoland/deno:2.4.5
+# Build stage
+FROM denoland/deno:2.4.5 AS builder
 
 WORKDIR /app
 
 # Copy project files
 COPY . .
 
-# Expose port (change if your app uses a different port)
+RUN deno cache main.ts
+
+# Production stage
+FROM denoland/deno:2.4.5
+WORKDIR /app
+COPY --from=builder /app .
 EXPOSE 3000
 
-# Run the main entry point (replace with your actual entry file if different)
 CMD ["run", "--allow-net", "--allow-read", "--allow-env", "--unstable-kv", "main.tsx"]
