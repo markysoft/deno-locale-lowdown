@@ -8,6 +8,15 @@ export function WeatherCard({ weekAheadDay }: { weekAheadDay: WeekAheadDay }) {
           <h3>
             {weekAheadDay.weather.date}: {weekAheadDay.weather.main}
           </h3>
+          <div className='card-image has-text-centered'>
+            <figure className='image is-64x64' style={{ display: 'inline-block' }}>
+              <img
+                src={`https://openweathermap.org/img/wn/${weekAheadDay.weather.icon}@2x.png`}
+                alt={weekAheadDay.weather.main}
+                title="today's weather"
+              />
+            </figure>
+          </div>
           <p>
             {weekAheadDay.weather.description?.map((line) => (
               <>

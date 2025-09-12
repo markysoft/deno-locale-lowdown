@@ -1,48 +1,49 @@
-export interface OpenWeatherWeek {
-  lat: number
-  lon: number
-  timezone: string
-  timezone_offset: number
-  daily?: OpenWeather[] | null
-}
-export interface OpenWeather {
-  dt: number
-  summary: string
-  sunrise: number
-  sunset: number
-  moonrise: number
-  moonset: number
-  moon_phase: number
-  temp: Temp
-  feels_like: FeelsLike
-  pressure: number
-  humidity: number
-  dew_point: number
-  wind_speed: number
-  wind_deg: number
-  wind_gust: number
-  weather: WeatherEntity[]
-  clouds: number
-  pop: number
-  uvi: number
-}
-export interface Temp {
-  day: number
-  min: number
-  max: number
-  night: number
-  eve: number
-  morn: number
-}
-export interface FeelsLike {
-  day: number
-  night: number
-  eve: number
-  morn: number
-}
-export interface WeatherEntity {
-  id: number
-  main: string
-  description: string
-  icon: string
-}
+import { z } from 'zod'
+
+export const WeatherEntitySchema = z.object({
+  id: z.number(),
+  main: z.string(),
+  description: z.string(),
+  icon: z.string(),
+})
+
+export const TempSchema = z.object({
+  day: z.number(),
+  min: z.number(),
+  max: z.number(),
+  night: z.number(),
+  eve: z.number(),
+  morn: z.number(),
+})
+
+export const FeelsLikeSchema = z.object({
+  day: z.number(),
+  night: z.number(),
+  eve: z.number(),
+  morn: z.number(),
+})
+
+export const OpenWeatherSchema = z.object({
+  dt: z.number(),
+  summary: z.string(),
+  sunrise: z.number(),
+  sunset: z.number(),
+  moonrise: z.number(),
+  moonset: z.number(),
+  moon_phase: z.number(),
+  temp: TempSchema,
+  feels_like: FeelsLikeSchema,
+  pressure: z.number(),
+  humidity: z.number(),
+  dew_point: z.number(),
+  wind_speed: z.number(),
+  wind_deg: z.number(),
+  wind_gust: z.number(),
+  weather: z.array(WeatherEntitySchema),
+  clouds: z.number(),
+  pop: z.number(),
+  uvi: z.number(),
+})
+
+
+export type OpenWeather = z.infer<typeof OpenWeatherSchema>

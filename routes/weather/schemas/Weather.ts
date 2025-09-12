@@ -6,6 +6,7 @@ import { degreesToCompass, getDayOfWeek as toDayOfWeek, splitOnSemiColons } from
 export const WeatherSchema = z.object({
   date: z.date().optional().transform((val) => val ? toDayOfWeek(val) : undefined),
   main: z.string().optional(),
+  icon: z.string().optional(),
   description: z.string().transform(splitOnSemiColons).optional(),
   chanceOfRain: z.number().transform((val) => `${Math.round(val * 100)}%`)
     .optional(),

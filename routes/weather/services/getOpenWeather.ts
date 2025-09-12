@@ -21,11 +21,12 @@ function mapWeather(todayWeather: OpenWeather): WeekAheadDay {
     moon_phase,
   } = todayWeather
 
-  const { main } = weather
+  const { main, icon } = weather
   return {
     weather: WeatherSchema.parse({
       date: new Date(date * 1000),
       main,
+      icon,
       description,
       chanceOfRain,
       temp,
