@@ -22,8 +22,8 @@ export const Layout: FC = () => {
         >
         </script>
         <script
-          type='module'
-          src='https://cdn.jsdelivr.net/gh/starfederation/datastar@main/bundles/datastar.js'
+          type="module"
+          src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.6/bundles/datastar.js"
         >
         </script>
         <style>
@@ -54,7 +54,7 @@ export const Layout: FC = () => {
             <p class='subtitle'>
               Barton-le-Street Edition
             </p>
-            <div data-on-datastar-fetch="$_fetchError = evt.detail.type === 'retrying' || evt.detail.type === 'retry-failed'">
+            <div data-on:datastar-fetch="$_fetchError = evt.detail.type === 'retrying' || evt.detail.type === 'retry-failed'">
             </div>
             <div
               class='box error-message'
@@ -74,7 +74,7 @@ export const Layout: FC = () => {
                   </h2>
                   <div
                     id='weather-today'
-                    data-on-load="@get('/weather/today')"
+                    data-init="@get('/weather/today')"
                   >
                     <div class='spinner box has-text-centered'>
                       <div class='fa fa-spinner fa-spin'>
@@ -85,7 +85,7 @@ export const Layout: FC = () => {
                 <div class='content'>
                   <div
                     id='travel-bus'
-                    data-on-load="@get('/travel/bus')"
+                    data-init="@get('/travel/bus')"
                   >
                     <div class='spinner box has-text-centered'>
                       <div class='fa fa-spinner fa-spin'>
@@ -97,7 +97,7 @@ export const Layout: FC = () => {
                   <h2 class='title has-text-primary-15'>
                     Bins
                   </h2>
-                  <div id='bins' data-on-load="@get('/bins')">
+                  <div id='bins' data-init="@get('/bins')">
                     <div class='spinner box has-text-centered'>
                       <div class='fa fa-spinner fa-spin'>
                       </div>
@@ -107,14 +107,14 @@ export const Layout: FC = () => {
                 <div
                   class='content'
                   data-signals='
-									{ 
+									{
 										station: "MLT"
 									}'
                 >
                   <div
                     id='train-departures'
                     data-indicator='_fetchTrains'
-                    data-on-load="@get('/travel/train', {requestCancellation: $_trainController})"
+                    data-init="@get('/travel/train', {requestCancellation: $_trainController})"
                   >
                     <div class='spinner box has-text-centered'>
                       <div class='fa fa-spinner fa-spin'>
@@ -128,7 +128,7 @@ export const Layout: FC = () => {
                   </h2>
                   <div
                     id='tides'
-                    data-on-load="@get('/tides')"
+                    data-init="@get('/tides')"
                   >
                     <div class='spinner box has-text-centered'>
                       <div class='fa fa-spinner fa-spin'>
@@ -142,7 +142,7 @@ export const Layout: FC = () => {
                   </h2>
                   <div
                     id='bank-holidays-next'
-                    data-on-load="@get('/bank-holidays/next')"
+                    data-init="@get('/bank-holidays/next')"
                   >
                     <div class='spinner box has-text-centered'>
                       <div class='fa fa-spinner fa-spin'>
@@ -156,7 +156,7 @@ export const Layout: FC = () => {
                   </h2>
                   <div
                     id='weather-week-ahead'
-                    data-on-load="@get('/weather/week-ahead')"
+                    data-init="@get('/weather/week-ahead')"
                   >
                     <div class='spinner box has-text-centered'>
                       <div class='fa fa-spinner fa-spin'>
@@ -172,7 +172,7 @@ export const Layout: FC = () => {
                   </h2>
                   <div
                     id='bank-holidays-upcoming'
-                    data-on-load="@get('/bank-holidays/upcoming')"
+                    data-init="@get('/bank-holidays/upcoming')"
                   >
                     <div class='spinner box has-text-centered'>
                       <div class='fa fa-spinner fa-spin'>

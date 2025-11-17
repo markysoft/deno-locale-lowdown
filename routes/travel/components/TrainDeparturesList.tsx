@@ -31,7 +31,7 @@ export function TrainDeparturesList({ departures }: { departures: Departures }) 
                 >
                   <a
                     aria-label={`get ${station.name} train times`}
-                    data-on-click={`$station='${station.crs}';@post('/travel/train')`} 
+                    data-on:click={`$station='${station.crs}';@post('/travel/train')`}
                   >
                     {station.name}
                   </a>
