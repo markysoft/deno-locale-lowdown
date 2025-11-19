@@ -15,7 +15,7 @@ const app = new Hono()
 
 const kv = await Deno.openKv()
 
-app.get('/bus', async (c) => {
+app.get('/bus', (c) => {
   const travelSettings = getAppSettings().travel
 
   const updateBusTimes = () => {
@@ -33,7 +33,7 @@ app.get('/bus', async (c) => {
     return Promise.resolve(htmlString)
   }
 
-  return await streamWrapper(c, updateBusTimes, 'na', oneMinuteInSeconds, 60)
+  return streamWrapper(c, updateBusTimes, 'na', oneMinuteInSeconds, 60)
 })
 
 app.get('/train', async (c) => {
@@ -46,7 +46,7 @@ app.get('/train', async (c) => {
     trainSignals.station = msg.station
   })
 
-  return await streamWrapper(
+  return streamWrapper(
     c,
     () => updateTrainDepartures(trainSignals),
     trainSignals.sessionId,
