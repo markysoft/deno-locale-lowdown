@@ -1,15 +1,15 @@
 # Build stage
-FROM denoland/deno:2.4.5 AS builder
+FROM denoland/deno:2.5.6 AS builder
 
 WORKDIR /app
 
 # Copy project files
 COPY . .
 
-RUN deno cache main.ts
+RUN deno cache main.tsx
 
 # Production stage
-FROM denoland/deno:2.4.5
+FROM denoland/deno:2.5.6
 WORKDIR /app
 COPY --from=builder /app .
 EXPOSE 3000
